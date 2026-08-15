@@ -16,5 +16,23 @@ services:
       timeout: 5s
       retries: 5
 
+  catalog-database:
+    image: postgres:18.4
+    restart: always
+    environment:
+      POSTGRES_DB: catalog
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+    ports:
+      - "5436:5432"
+    volumes:
+      - catalog_data:/var/lib/postgresql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
 volumes:
   registration_data:
+  catalog_data:
