@@ -55,7 +55,25 @@ services:
       timeout: 5s
       retries: 3
 
+  ticketing-database:
+    image: mysql:9.7.2
+    environment:
+      MYSQL_DATABASE: ticketing
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app
+    ports:
+      - "3307:3306"
+    volumes:
+      - ticketing_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uapp", "-papp"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
 volumes:
   registration_data:
   catalog_data:
   metadata_data:
+  ticketing_data:
