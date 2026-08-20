@@ -56,18 +56,28 @@ services:
       retries: 3
 
   ticketing-database:
-    image: mysql:9.7.2
+    image: postgres:18.4
+    restart: always
     environment:
-      MYSQL_DATABASE: ticketing
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: app
-      MYSQL_PASSWORD: app
+      POSTGRES_DB: ticketing
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
     ports:
-      - "3307:3306"
+      - "5437:5432"
     volumes:
-      - ticketing_data:/var/lib/mysql
+      - ticketing_data:/var/lib/postgresql
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uapp", "-papp"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  ticketing-lock:
+    image: redis:8.8
+    ports:
+      - "6381:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 5s
       timeout: 5s
       retries: 3
